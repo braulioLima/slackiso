@@ -1,0 +1,24 @@
+#!/bin/sh
+#set -x
+VERSION=${VERSION:-current}
+ARCH=${ARCH:-64}
+TARGET=~/slackware/iso/slackware${ARCH}-${VERSION}-$(date +"%d-%b-%Y").iso
+SOURCE=~/slackware/slackware${ARCH}-${VERSION}
+SYSLINUX=~/slackware/iso
+
+xorriso -as mkisofs \
+  -iso-level 3 \
+  -full-iso9660-filenames \
+  -R -J -A "Slackware Install" \
+  -hide-rr-moved \
+  -v -d -N \
+  -eltorito-boot isolinux/isolinux.bin \
+  -eltorito-catalog isolinux/boot.cat \
+  -no-emul-boot -boot-load-size 4 -boot-info-table \
+  -isohybrid-mbr ${SYSLINUX}/isohdpfx.bin \
+  -eltorito-alt-boot \
+  -e isolinux/efiboot.img \
+  -no-emul-boot -isohybrid-gpt-basdat \
+  -volid "SlackDVD" \
+  -output ${TARGET} \
+  ${SOURCE} 
